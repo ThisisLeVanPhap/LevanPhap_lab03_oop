@@ -1,0 +1,48 @@
+9. Constructors of whole classes and parent classes
+- Which classes are aggregates of other classes? Checking all constructors of whole classes if they
+initialize for their parts?
+Ans: In object-oriented design, aggregates are classes that manage collections of other objects. In your case, the Cart class aggregates Media objects (e.g., Book, CompactDisc, DigitalVideoDisc) through the itemsOrdered list, while the Book class aggregates a list of authors managed by specific methods. Similarly, the CompactDisc class aggregates Track objects via a tracks list, with methods for managing them. In contrast, DigitalVideoDisc and Disc are individual items, not aggregates. Thus, Cart and Book are true aggregates as they hold and manage references to other objects.
+
+10. Unique item in a list
+Question: When overriding the equals() method of the Object class, you will have to cast the Object parameter obj to the type of Object that you are dealing with. For example, in the Media class, you must cast the Object obj to a Media, and then check the equality of the two objects’ attributes as the above requirements (i.e. title for Media; title and length for Track). If the passing object is not an instance of Media, what happens?
+Ans: If the passed object is not an instance of the Media class (or its subclasses) when overriding the equals() method, the method should return false. When overriding the equals() method in the Object class, it's essential to ensure that the parameter obj is of the correct type before proceeding with the equality check. This is typically done using the instanceof operator. Returning flase avoids attempting an unsafe cast, which would otherwise result in a ClassCastException. By checking the type, the equals() method adheres to its contract, ensuring robustness, type safety, and consistency.
+
+11. Polymorphism with toString() method
+Explanation: When iterating through the mediaList and calling the toString() method on each object, the specific implementation of toString() executed depends on the runtime type of the object. This demonstrates polymorphism in Java. For example:
+When the object is a Book, the overridden toString() in the Book class is executed, printing details specific to a Book.
+When the object is a DigitalVideoDisc, its overridden toString() is called, displaying information about the DVD.
+Polymorphism allows the same method (toString) to behave differently based on the actual object type, making the code more flexible and reusable.
+
+12. Sort media in the cart
+1. What class should implement the Comparable interface?
+The Media class should implement the Comparable interface since it is the parent class of all media types (Book, CompactDisc, DigitalVideoDisc) and is used for comparisons in the Cart.
+2. How should you implement the compareTo() method to reflect the ordering that we want?
+In the Media class, the compareTo() method should compare items first by title (alphabetically) and then by cost (numerically) if the titles are equal. This can be implemented as:
+"@Override
+public int compareTo(Media other) {
+    int titleComparison = this.title.compareTo(other.title);
+    if (titleComparison != 0) {
+        return titleComparison;
+    }
+    return Float.compare(this.cost, other.cost);
+}"
+3. Can we have two ordering rules of the item (by title then cost and by cost then title) if we use this Comparable interface approach?
+No, the Comparable interface supports only one natural ordering (defined by the compareTo() method). To support multiple ordering rules, we would need to use the Comparator interface, which allows defining different comparison logic.
+4. Suppose the DVDs have a different ordering rule (by title, then decreasing length, then cost). How would you modify your code to allow this?
+To handle a different ordering rule for DVDs, the DigitalVideoDisc class can override the compareTo() method inherited from Media and implement its specific logic, like this:
+"@Override
+public int compareTo(Media other) {
+    if (other instanceof DigitalVideoDisc) {
+        DigitalVideoDisc dvd = (DigitalVideoDisc) other;
+        int titleComparison = this.title.compareTo(dvd.title);
+        if (titleComparison != 0) {
+            return titleComparison;
+        }
+        int lengthComparison = Float.compare(dvd.length, this.length); // Decreasing length
+        if (lengthComparison != 0) {
+            return lengthComparison;
+        }
+        return Float.compare(this.cost, dvd.cost);
+    }
+    return super.compareTo(other); // Default comparison for other media types
+}"
