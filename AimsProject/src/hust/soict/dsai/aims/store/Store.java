@@ -1,52 +1,66 @@
 package hust.soict.dsai.aims.store;
-
+import hust.soict.dsai.aims.media.*;
 import java.util.LinkedList;
-
-import hust.soict.dsai.aims.disc.DigitalVideoDisc;
-
 public class Store {
-    private LinkedList<DigitalVideoDisc> itemsInStore = new LinkedList<>();
+    private LinkedList<Media> itemsInStore = new LinkedList<Media>();
 
-    private boolean checkDVD(DigitalVideoDisc disc) {
-        for (DigitalVideoDisc digitalVideoDisc : itemsInStore) {
-            if (digitalVideoDisc.equals(disc)) {
+    private boolean checkMedia(Media disc) {
+        for (Media item : itemsInStore) {
+            if (item.equals(disc)) {
                 return true;
             }
         }
         return false;
     }
 
-    public void addDVD(DigitalVideoDisc disc) {
-        if (!checkDVD(disc)) {
-            itemsInStore.add(disc);
-            System.out.println(disc.getTitle() + " has been added to the store!");
-        } else {
-            System.out.println(disc.getTitle() + " already exists in the store!");
-        }
-    }
-
-    public void removeDVD(DigitalVideoDisc disc) {
-        if (checkDVD(disc)) {
-            itemsInStore.remove(disc);
-            System.out.println(disc.getTitle() + " has been deleted from the store!");
-        } else {
-            System.out.println("There is no " + disc.getTitle() + " in the store!");
-        }
-    }
-
-    public String toString() {
-        StringBuilder string = new StringBuilder("****************STORE****************\nItems in the store:\n");
-        if (itemsInStore.isEmpty()) {
-            string.append("There is no DVD in the store!\n");
-        } else {
-            for (DigitalVideoDisc dvd : itemsInStore) {
-                string.append(dvd.getTitle())
-                      .append(" - ")
-                      .append(dvd.getCost())
-                      .append(" $\n");
+    public Media findMedia(String title) {
+        for (Media item : itemsInStore) {
+            if (item.getTitle().equals(title)) {
+                return item;
             }
         }
-        string.append("***************************************");
-        return string.toString();
+        return null;
+    }
+
+	public LinkedList<Media> getItemsInStore() {
+		return itemsInStore;
+	}
+
+    public void addMedia(Media disc) {
+        if(!checkMedia(disc)) {
+            itemsInStore.add(disc);
+            System.out.println( disc.getTitle() + " 've been added to the store !");
+        } else {
+            System.out.println( disc.getTitle() + " 'already exists in the store !");
+        }
+    }
+
+    public void removeMedia(Media disc) {
+        if(checkMedia(disc)) {
+            itemsInStore.remove(disc);
+            System.out.println( disc.getTitle() + " 've been deleted from the store !");
+        } else {
+            System.out.println("There is no "+ disc.getTitle() + " in the store !");
+        }
+    }
+
+    public Media findMediaByTitle(String title) {
+        for (Media media : itemsInStore) {
+            if (media.getTitle().equalsIgnoreCase(title)) {
+                return media;
+            }
+        }
+        return null;
+    }
+
+    public void print() {
+        if (itemsInStore.isEmpty()) {
+            System.out.println("The store is empty.");
+        } else {
+            System.out.println("Items in store:");
+            for (Media media : itemsInStore) {
+                System.out.println(media.toString());
+            }
+        }
     }
 }
